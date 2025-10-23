@@ -1,0 +1,276 @@
+DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quadratic Solver & Grading System</title>
+  <style>
+    /* 🌈 Colorful background */
+    body {
+      margin: 0;
+      font-family: "Poppins", Arial, sans-serif;
+      background: linear-gradient(135deg, #74ABE2, #5563DE, #B264E3);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 40px 15px;
+      overflow-x: hidden;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      max-width: 900px;
+      width: 100%;
+      animation: fadeIn 1.2s ease;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 2rem;
+      background: linear-gradient(90deg, #ffe259, #ffa751);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    h2 {
+      color: #fff;
+      margin-top: 20px;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 10px;
+      border-radius: 10px;
+      text-align: center;
+      letter-spacing: 1px;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+      color: #ffe259;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+      margin-bottom: 10px;
+      background: rgba(255, 255, 255, 0.9);
+      color: #333;
+      font-size: 1rem;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      flex: 1;
+      background: linear-gradient(45deg, #00c6ff, #0072ff);
+      border: none;
+      color: white;
+      padding: 10px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    button.reset {
+      background: linear-gradient(45deg, #ff6a00, #ee0979);
+    }
+
+    .card {
+      margin-top: 30px;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 15px;
+      box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.2);
+      animation: slideIn 1.5s ease;
+    }
+
+    .result {
+      margin-top: 15px;
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 10px;
+      padding: 10px;
+      color: #333;
+      font-weight: bold;
+      white-space: pre-wrap;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .error {
+      color: #ffcccc;
+      font-size: 0.9rem;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: #ffe;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🌟 Quadratic Solver & Grading System 🌟</h1>
+
+    <!-- Quadratic Solver -->
+    <div class="card">
+      <h2>1️⃣ Quadratic Solver</h2>
+      <label for="a">Enter a:</label>
+      <input type="number" id="a" placeholder="e.g. 1" />
+      <div class="error" id="errA"></div>
+
+      <label for="b">Enter b:</label>
+      <input type="number" id="b" placeholder="e.g. 5" />
+      <div class="error" id="errB"></div>
+
+      <label for="c">Enter c:</label>
+      <input type="number" id="c" placeholder="e.g. 6" />
+      <div class="error" id="errC"></div>
+
+      <div class="button-group">
+        <button onclick="solveQuadratic()">Solve Equation</button>
+        <button class="reset" onclick="resetQuadratic()">Reset</button>
+      </div>
+
+      <div class="result" id="quadResult" style="display:none;"></div>
+    </div>
+
+    <!-- Grading System -->
+    <div class="card">
+      <h2>2️⃣ Grading System</h2>
+      <label for="score">Enter Score (0–100):</label>
+      <input type="number" id="score" placeholder="e.g. 82" />
+      <div class="error" id="errScore"></div>
+
+      <div class="button-group">
+        <button onclick="getGrade()">Get Grade</button>
+        <button class="reset" onclick="resetGrade()">Clear</button>
+      </div>
+
+      <div class="result" id="gradeResult" style="display:none;"></div>
+    </div>
+
+    <footer>✨ Created by Beatrice Chewe | ICT251 JavaScript Activity ✨</footer>
+  </div>
+
+  <script>
+    // 🧮 Quadratic Solver
+    function solveQuadratic() {
+      const a = parseFloat(document.getElementById("a").value);
+      const b = parseFloat(document.getElementById("b").value);
+      const c = parseFloat(document.getElementById("c").value);
+
+      const errA = document.getElementById("errA");
+      const errB = document.getElementById("errB");
+      const errC = document.getElementById("errC");
+      const result = document.getElementById("quadResult");
+
+      errA.textContent = errB.textContent = errC.textContent = "";
+      result.style.display = "none";
+
+      if (isNaN(a) || isNaN(b) || isNaN(c)) {
+        if (isNaN(a)) errA.textContent = "Enter a valid number for a.";
+        if (isNaN(b)) errB.textContent = "Enter a valid number for b.";
+        if (isNaN(c)) errC.textContent = "Enter a valid number for c.";
+        return;
+      }
+
+      if (a === 0) {
+        errA.textContent = "a must not be 0 for a quadratic equation.";
+        return;
+      }
+
+      const D = b * b - 4 * a * c;
+      let output = `Discriminant (D) = ${D.toFixed(3)}\n`;
+
+      if (D > 0) {
+        const r1 = (-b + Math.sqrt(D)) / (2 * a);
+        const r2 = (-b - Math.sqrt(D)) / (2 * a);
+        output += "Nature of roots: Two distinct real roots.\n";
+        output += `Root 1 = ${r1.toFixed(3)}\nRoot 2 = ${r2.toFixed(3)}`;
+      } else if (D === 0) {
+        const r = -b / (2 * a);
+        output += "Nature of roots: One real repeated root.\n";
+        output += `Root = ${r.toFixed(3)}`;
+      } else {
+        const real = (-b / (2 * a)).toFixed(3);
+        const imag = (Math.sqrt(-D) / (2 * a)).toFixed(3);
+        output += "Nature of roots: Two complex conjugate roots.\n";
+        output += `Root 1 = ${real} + ${imag}i\nRoot 2 = ${real} - ${imag}i`;
+      }
+
+      result.textContent = output;
+      result.style.display = "block";
+    }
+
+    function resetQuadratic() {
+      ["a", "b", "c"].forEach(id => document.getElementById(id).value = "");
+      ["errA", "errB", "errC"].forEach(id => document.getElementById(id).textContent = "");
+      document.getElementById("quadResult").style.display = "none";
+    }
+
+    // 🎓 Grading System
+    function getGrade() {
+      const score = parseInt(document.getElementById("score").value);
+      const err = document.getElementById("errScore");
+      const result = document.getElementById("gradeResult");
+      err.textContent = "";
+      result.style.display = "none";
+
+      if (isNaN(score) || score < 0 || score > 100) {
+        err.textContent = "Enter a score between 0 and 100.";
+        return;
+      }
+
+      let grade;
+      if (score >= 85) grade = "A+";
+      else if (score >= 75) grade = "A";
+      else if (score >= 65) grade = "B+";
+      else if (score >= 60) grade = "B";
+      else if (score >= 55) grade = "C+";
+      else if (score >= 50) grade = "C";
+      else grade = "D";
+
+      result.textContent = `Score ${score} → Grade ${grade}`;
+      result.style.display = "block";
+    }
+
+    function resetGrade() {
+      document.getElementById("score").value = "";
+      document.getElementById("errScore").textContent = "";
+      document.getElementById("gradeResult").style.display = "none";
+    }
+  </script>
+</body>
+</html>
